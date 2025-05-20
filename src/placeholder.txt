@@ -1,0 +1,14 @@
+This directory will contain transformer implementations in Phase 2:
+
+1. Security pattern transformers:
+   - ReentrancyGuardTransformer.js - Implements protection against reentrancy attacks
+   - SafeMathTransformer.js - Implements integer overflow/underflow protection
+   - AccessControlTransformer.js - Implements ownership and access control
+
+2. Gas optimization transformers:
+   - ConstantFoldingTransformer.js - Pre-computes constant expressions
+   - StoragePackingTransformer.js - Optimizes variable layout for gas efficiency 
+   - DeadCodeEliminationTransformer.js - Removes unused code
+
+3. Code generation:
+   - SolidityGenerator.js - Generates Solidity code from the AST 

@@ -1,0 +1,27 @@
+{
+  "name": "smartra-dsl",
+  "version": "0.1.0",
+  "description": "A DSL for secure and gas-efficient smart contract development",
+  "main": "src/compiler.js",
+  "scripts": {
+    "generate": "antlr4 -Dlanguage=JavaScript grammar/Smartra.g4 -visitor -o src/generated_parser",
+    "start": "node src/compiler.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dsl",
+    "solidity",
+    "smart-contracts",
+    "ethereum",
+    "compiler"
+  ],
+  "author": "GasGuardians",
+  "license": "MIT",
+  "dependencies": {
+    "antlr4": "^4.13.1",
+    "prettier": "^3.0.3"
+  },
+  "devDependencies": {
+    "antlr4-c3": "^1.1.0"
+  }
+} 
