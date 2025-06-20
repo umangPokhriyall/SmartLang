@@ -4,8 +4,11 @@
   "description": "A DSL for secure and gas-efficient smart contract development",
   "main": "src/compiler.js",
   "scripts": {
-    "generate": "antlr4 -Dlanguage=JavaScript grammar/Smartra.g4 -visitor -o src/generated_parser",
+    "generate": "java -jar antlr-4.13.1-complete.jar -Dlanguage=JavaScript grammar/Smartra.g4 -visitor -o src/generated_parser",
     "start": "node src/compiler.js",
+    "compile": "node src/compiler.js",
+    "help": "node src/compiler.js --help",
+    "version": "node src/compiler.js --version",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

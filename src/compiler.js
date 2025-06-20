@@ -1,16 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const antlr4 = require("antlr4");
-const ASTBuilder = require("./astBuilder");
+const { parseSmartDSL } = require("./parser");
 const { applySecurityTransformations } = require("./transformers");
 const SolidityGenerator = require("./SolidityGenerator");
-
-// Note: In a real implementation, these would be imported from ANTLR-generated files
-// For the prototype, we're simulating this part
-/*
-const SmartraLexer = require('../dist/SmartraLexer').SmartraLexer;
-const SmartraParser = require('../dist/SmartraParser').SmartraParser;
-*/
 
 // Main compiler function
 async function compile(filePath, outputPath) {
@@ -24,19 +16,9 @@ async function compile(filePath, outputPath) {
     console.log(input);
     console.log("------------------------------\n");
 
-    // In a real implementation, we would use ANTLR for parsing:
-    /*
-    const chars = new antlr4.InputStream(input);
-    const lexer = new SmartraLexer(chars);
-    const tokens = new antlr4.CommonTokenStream(lexer);
-    const parser = new SmartraParser(tokens);
-    const tree = parser.program();
-    */
-
-    // For the prototype, we'll create an AST directly
+    // Parse the DSL file to build AST
     console.log("Building Abstract Syntax Tree (AST)...");
-    const astBuilder = new ASTBuilder();
-    let ast = astBuilder.visitProgram(/* would be tree in real impl */);
+    let ast = parseSmartDSL(input);
 
     // Print the AST
     console.log("\nGenerated AST:");
@@ -79,14 +61,57 @@ async function compile(filePath, outputPath) {
   } catch (error) {
     console.error("Compilation failed:", error);
     console.error(error.stack);
+    throw error;
   }
 }
 
-// Run the compiler on the example file
-const exampleFile = path.join(__dirname, "..", "examples", "token.sl");
-// You can specify an output path as the second argument
-const outputFile = process.argv[2] ? process.argv[2] : null;
-compile(exampleFile, outputFile);
+// CLI functionality
+function main() {
+  const args = process.argv.slice(2);
+
+  if (args.length === 0) {
+    // Default behavior - compile the example
+    const exampleFile = path.join(__dirname, "..", "examples", "token.sl");
+    compile(exampleFile, null);
+  } else if (args[0] === "--help" || args[0] === "-h") {
+    console.log(`
+Smartra DSL Compiler
+Usage: node src/compiler.js [options] [input.sl] [output.sol]
+
+Options:
+  --help, -h        Show this help message
+  --version, -v     Show version information
+
+Arguments:
+  input.sl          Input DSL file to compile (default: examples/token.sl)
+  output.sol        Output Solidity file (optional)
+
+Examples:
+  node src/compiler.js                           # Compile default example
+  node src/compiler.js examples/voting.sl       # Compile specific file
+  node src/compiler.js input.sl output.sol      # Compile with output file
+`);
+  } else if (args[0] === "--version" || args[0] === "-v") {
+    const packageJson = require("../package.json");
+    console.log(`Smartra DSL Compiler v${packageJson.version}`);
+  } else {
+    // Compile specified file
+    const inputFile = args[0];
+    const outputFile = args[1] || null;
+
+    if (!fs.existsSync(inputFile)) {
+      console.error(`Error: Input file '${inputFile}' not found.`);
+      process.exit(1);
+    }
+
+    compile(inputFile, outputFile);
+  }
+}
+
+// Run if called directly
+if (require.main === module) {
+  main();
+}
 
 module.exports = {
   compile,
